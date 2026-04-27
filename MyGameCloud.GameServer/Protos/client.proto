@@ -1,0 +1,29 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "MyGameCloud.Protos";
+
+message HeartBeat
+{
+    bool ok = 1;
+}
+
+message MoveContent {
+    float x = 1;
+    float y = 2;
+}
+
+message ChatContent {
+    string text = 1;
+}
+
+message ClientPacket {
+    int32 id = 1;
+    int64 timestamp = 2;
+    string sender = 3;
+    
+    oneof content {
+        HeartBeat heartBeat = 4;
+        MoveContent move = 5;
+        ChatContent chat = 6;
+    }
+}

@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MyGameCloud.AppHost/MyGameCloud.AppHost.csproj" />
+  <Project Path="MyGameCloud.GameServer/MyGameCloud.GameServer.csproj" />
+  <Project Path="MyGameCloud.ServiceDefaults/MyGameCloud.ServiceDefaults.csproj" />
+</Solution>

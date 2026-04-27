@@ -1,0 +1,73 @@
+﻿using System.Net.WebSockets;
+using Google.Protobuf;
+using Microsoft.AspNetCore.Mvc;
+using MyGameCloud.GameServer.Logic;
+
+namespace MyGameCloud.GameServer.Network;
+
+[Route("ws")]
+public class WSController(ILogger<WSController> logger, Lobby lobby) : ControllerBase
+{
+    [HttpGet]
+    public async Task Get()
+    {
+        if (!HttpContext.WebSockets.IsWebSocketRequest)
+        {
+
+            HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            return;
+        }
+
+
+        using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+
+        await Listen(webSocket);
+
+    }
+
+    private async Task Listen(WebSocket webSocket)
+    {
+        Player player = Player.Create(new WSPeer(webSocket), lobby);
+        await player.SendLoginInfo();
+        lobby.EnterPlayer(player);
+        var buffer = new byte[1024 * 4];
+        while (webSocket.State == WebSocketState.Open)
+        {
+            await HandleReceive(webSocket, player, buffer);
+        }
+    }
+
+    private async Task HandleReceive(WebSocket ws, Player player, byte[] buffer)
+    {
+        using MemoryStream ms = new();
+        WebSocketReceiveResult result;
+        do
+        {
+            result = await ws.ReceiveAsync(buffer, CancellationToken.None);
+            if (result.MessageType == WebSocketMessageType.Close)
+            {
+                await player.CloseConnection();
+                break;
+            }
+            ms.Write(buffer, 0, result.Count);
+
+        } while (!result.EndOfMessage);
+
+        if (result.MessageType == WebSocketMessageType.Binary)
+        {
+            ms.Seek(0, SeekOrigin.Begin);
+            try
+            {
+                Protos.ClientPacket packet = Protos.ClientPacket.Parser.ParseFrom(ms);
+
+                player.ProcessMessage(packet);
+            }
+            catch (InvalidProtocolBufferException ex)
+            {
+                logger.LogError(ex, $"Failed On Parsing: {ex.Message}");
+            }
+        }
+
+    }
+
+}
