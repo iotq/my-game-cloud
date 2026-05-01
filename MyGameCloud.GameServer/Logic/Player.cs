@@ -6,6 +6,8 @@ namespace MyGameCloud.GameServer.Logic;
 public class Player(string id, IPeer peer, Lobby lobby)
 {
     public string Id => id;
+    public string Name = "";
+    public int shortId;
     public IPeer Peer => peer;
     public float X { get; set; }
     public float Y { get; set; }
@@ -14,6 +16,8 @@ public class Player(string id, IPeer peer, Lobby lobby)
 
     public Room? CurrentRoom { get; set; }
 
+    // 儲存上一次成功發送給客戶端的快照
+    private PlayerSnapshot? _lastState = null;
     public async Task CloseConnection()
     {
         if (CurrentRoom != null)
@@ -62,15 +66,55 @@ public class Player(string id, IPeer peer, Lobby lobby)
         await peer.Send(packet.ToByteArray());
     }
 
-    public Protos.PlayerContent ToProto()
+    public Protos.PlayerContent ToRealtimeProto()
     {
         return new Protos.PlayerContent
         {
-            Id = Id,
+            ShortId = shortId,
             X = X,
             Y = Y,
             Rotation = Rotation,
             Hp = Hp
         };
     }
+
+    public Protos.PlayerFullInfo ToFullInfoProto()
+    {
+        return new Protos.PlayerFullInfo
+        {
+            Id = Id,
+            Name = Name,
+            ShortId = shortId,
+            X = X,
+            Y = Y,
+            Rotation = Rotation,
+            Hp = Hp
+        };
+    }
+
+    public bool IsDirty()
+    {
+        if (_lastState is null) return true;
+        return Math.Abs(X - _lastState.X) > 0.01f ||
+               Math.Abs(Y - _lastState.Y) > 0.01f ||
+               Math.Abs(Rotation - _lastState.Rotation) > 0.1f ||
+               Hp != _lastState.Hp;
+    }
+    public void UpdateSnapshot()
+    {
+        if (_lastState is null)
+        {
+            _lastState = new();
+        }
+        _lastState.X = X;
+        _lastState.Y = Y;
+        _lastState.Rotation = Rotation;
+        _lastState.Hp = Hp;
+    }
+    private class PlayerSnapshot
+    {
+        public float X, Y, Rotation;
+        public int Hp;
+    }
+
 }

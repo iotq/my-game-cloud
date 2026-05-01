@@ -71,7 +71,7 @@ public class PollingService(IConfiguration config, Lobby lobby) : BackgroundServ
         {
             _server.PollEvents();
             lobby.Boardcast();
-            Thread.Sleep(80);
+            Thread.Sleep(50);
         }
         _server.Stop();
     }

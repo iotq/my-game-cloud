@@ -7,15 +7,31 @@ message LoginConent {
 }
 
 message PlayerContent {
-    string id = 1;
+    int32 short_id = 1;
     float x = 2;
     float y = 3;
     float rotation = 4;
     int32 hp = 5;
 }
+
+message PlayerFullInfo {
+    string id = 1;
+    string name = 2;
+    int32 short_id = 3;
+    float x = 4;
+    float y = 5;
+    float rotation = 6;
+    int32 hp = 7;
+}
+
 message RealtimeContent {
     repeated PlayerContent players = 1;
 }
+
+message RoomSnapshot {
+    repeated PlayerFullInfo players = 1;
+}
+
 message EnterContent {
     string playerId = 1;
 }
@@ -28,6 +44,7 @@ message ServerPacket {
         LoginConent login = 3;
         EnterContent enter = 4;
         RealtimeContent realtime = 5;
+        RoomSnapshot roomSnapshot = 6;
     }
     
 }

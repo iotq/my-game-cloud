@@ -56,7 +56,7 @@ public class Lobby
             Timestamp = DateTime.UtcNow.Ticks,
             Realtime = new()
         };
-        packet.Realtime.Players.AddRange(playerList.Values.Select(p => p.ToProto()));
+        packet.Realtime.Players.AddRange(playerList.Values.Select(p => p.ToRealtimeProto()));
         string[] keys = playerList.Keys.ToArray();
         foreach (var pid in keys)
         {
@@ -79,8 +79,6 @@ public class Lobby
         {
             room.Boardcast();
         }
-
-        BoardcastRealtimeToPlayers(Players, ExitPlayer);
 
         if (PacketIdCursor > 1000 * 1000 * 1000)
         {
