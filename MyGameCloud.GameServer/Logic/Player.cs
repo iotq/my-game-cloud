@@ -8,6 +8,7 @@ public class Player(string id, IPeer peer, Lobby lobby)
     public string Id => id;
     public string Name = "";
     public int shortId;
+    public int characterId;
     public IPeer Peer => peer;
     public float X { get; set; }
     public float Y { get; set; }
@@ -47,6 +48,7 @@ public class Player(string id, IPeer peer, Lobby lobby)
             case Protos.ClientPacket.ContentOneofCase.Move:
                 X = packet.Move.X;
                 Y = packet.Move.Y;
+                Rotation = packet.Move.Rotation;
                 break;
 
             case Protos.ClientPacket.ContentOneofCase.Chat:
@@ -85,6 +87,7 @@ public class Player(string id, IPeer peer, Lobby lobby)
             Id = Id,
             Name = Name,
             ShortId = shortId,
+            CharacterId = characterId,
             X = X,
             Y = Y,
             Rotation = Rotation,

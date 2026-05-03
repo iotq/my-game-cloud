@@ -18,7 +18,15 @@ public class Room(Lobby lobby, int roomId)
         player.X = 1;
         player.Y = 10;
         player.shortId = playerIdCursor++;
-        SendPacketTo(CreateRoomSnapshotPacket(), player);
+        Random rnd = new Random();
+        player.characterId = rnd.Next(4);
+
+        // boardcast the player info to all players
+        var packet = CreateRoomSnapshotPacket();
+        foreach(var p in Players.Values)
+        {
+            SendPacketTo(packet, p);
+        }
     }
 
     public void ExitPlayer(string playerId)

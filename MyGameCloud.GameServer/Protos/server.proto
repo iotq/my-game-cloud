@@ -18,10 +18,11 @@ message PlayerFullInfo {
     string id = 1;
     string name = 2;
     int32 short_id = 3;
-    float x = 4;
-    float y = 5;
-    float rotation = 6;
-    int32 hp = 7;
+    int32 character_id = 4;
+    float x = 5;
+    float y = 6;
+    float rotation = 7;
+    int32 hp = 8;
 }
 
 message RealtimeContent {

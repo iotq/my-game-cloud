@@ -10,7 +10,8 @@ message HeartBeat
 message MoveContent {
     float x = 1;
     float y = 2;
-}
+    float rotation = 3;
+}   
 
 message ChatContent {
     string text = 1;
