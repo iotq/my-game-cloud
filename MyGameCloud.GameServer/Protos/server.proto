@@ -12,6 +12,7 @@ message PlayerContent {
     float y = 3;
     float rotation = 4;
     int32 hp = 5;
+    int32 mass = 6;
 }
 
 message PlayerFullInfo {
@@ -23,6 +24,7 @@ message PlayerFullInfo {
     float y = 6;
     float rotation = 7;
     int32 hp = 8;
+    int32 mass = 9;
 }
 
 message RealtimeContent {

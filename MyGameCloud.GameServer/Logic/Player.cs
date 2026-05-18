@@ -14,6 +14,7 @@ public class Player(string id, IPeer peer, Lobby lobby)
     public float Y { get; set; }
     public float Rotation { get; set; }
     public int Hp { get; set; }
+    public int Mass { get; set; } = 1;
 
     public Room? CurrentRoom { get; set; }
 
@@ -76,7 +77,8 @@ public class Player(string id, IPeer peer, Lobby lobby)
             X = X,
             Y = Y,
             Rotation = Rotation,
-            Hp = Hp
+            Hp = Hp,
+            Mass = Mass,
         };
     }
 
@@ -91,7 +93,8 @@ public class Player(string id, IPeer peer, Lobby lobby)
             X = X,
             Y = Y,
             Rotation = Rotation,
-            Hp = Hp
+            Hp = Hp,
+            Mass = Mass,
         };
     }
 
@@ -101,6 +104,7 @@ public class Player(string id, IPeer peer, Lobby lobby)
         return Math.Abs(X - _lastState.X) > 0.01f ||
                Math.Abs(Y - _lastState.Y) > 0.01f ||
                Math.Abs(Rotation - _lastState.Rotation) > 0.1f ||
+               Math.Abs(Mass - _lastState.Mass) > 0 ||
                Hp != _lastState.Hp;
     }
     public void UpdateSnapshot()
@@ -113,11 +117,13 @@ public class Player(string id, IPeer peer, Lobby lobby)
         _lastState.Y = Y;
         _lastState.Rotation = Rotation;
         _lastState.Hp = Hp;
+        _lastState.Mass = Mass;
     }
     private class PlayerSnapshot
     {
         public float X, Y, Rotation;
         public int Hp;
+        public int Mass;
     }
 
 }
