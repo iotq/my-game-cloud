@@ -28,4 +28,8 @@
 		<Protobuf Include="Protos\client.proto" GrpcServices="None" />
 		<Protobuf Include="Protos\server.proto" GrpcServices="None" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\game\" />
+	</ItemGroup>
 </Project>

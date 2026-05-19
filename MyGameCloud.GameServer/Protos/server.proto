@@ -13,6 +13,7 @@ message PlayerContent {
     float rotation = 4;
     int32 hp = 5;
     int32 mass = 6;
+    bool isDead = 7;
 }
 
 message PlayerFullInfo {
@@ -25,17 +26,31 @@ message PlayerFullInfo {
     float rotation = 7;
     int32 hp = 8;
     int32 mass = 9;
+    bool isDead = 10;
+}
+
+message FoodContent {
+    int32 id = 1;
+    float x = 2;
+    float y = 3;
+    bool isDead = 4;
 }
 
 message RealtimeContent {
     repeated PlayerContent players = 1;
+    repeated FoodContent foods = 2;
 }
 
 message RoomSnapshot {
     repeated PlayerFullInfo players = 1;
+    repeated FoodContent foods = 2;
 }
 
 message EnterContent {
+    string playerId = 1;
+}
+
+message ExitContent {
     string playerId = 1;
 }
 

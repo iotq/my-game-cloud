@@ -1,6 +1,7 @@
 using MyGameCloud.GameServer.Logic;
 using MyGameCloud.GameServer.Network;
 using Serilog;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,4 +27,6 @@ app.UseWebSockets(webSocketOptions);
 app.MapDefaultEndpoints();
 app.MapControllers();
 app.UseSerilogRequestLogging();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.Run();

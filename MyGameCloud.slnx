@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Project Path="MyGameCloud.AppHost/MyGameCloud.AppHost.csproj" />
   <Project Path="MyGameCloud.GameServer/MyGameCloud.GameServer.csproj" />
   <Project Path="MyGameCloud.ServiceDefaults/MyGameCloud.ServiceDefaults.csproj" />

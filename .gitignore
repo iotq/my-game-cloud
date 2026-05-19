@@ -19,3 +19,5 @@ bld/
 temp
 
 k8s-artifacts/
+
+*/wwwroot

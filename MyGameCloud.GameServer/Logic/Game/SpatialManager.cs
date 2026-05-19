@@ -11,7 +11,7 @@ public class SpatialManager
     private readonly Dictionary<int, GameEntity> _allEntities = new();
 
     // 更新或添加實體位置
-    public void UpdateEntity(int id, double x, double y)
+    public void UpdateEntity(int id, double x, double y, IEatable refObject)
     {
         var position = new Point(x, y);
 
@@ -23,7 +23,7 @@ public class SpatialManager
         }
         else
         {
-            entity = new GameEntity { Id = id, Position = position };
+            entity = new GameEntity(id, position, refObject) { Id = id, Position = position };
             _allEntities[id] = entity;
         }
 
@@ -32,8 +32,17 @@ public class SpatialManager
     }
 
     // 獲取玩家周圍的實體
-    public List<GameEntity> GetNearbyEntities(double x, double y, double radius)
+    public List<GameEntity> GetNearbyEntities(int id, double radius)
     {
+
+        if (!_allEntities.TryGetValue(id, out var entity))
+        {
+            return [];
+        }
+
+        var x = entity.Position.X;
+        var y = entity.Position.Y;
+
         // 1. 定義一個搜索範圍的矩形邊界 (Envelope)
         var searchBounds = new Envelope(x - radius, x + radius, y - radius, y + radius);
 
@@ -43,15 +52,28 @@ public class SpatialManager
         // 3. 精確過濾 (計算實際距離，排除矩形角落但在圓形半徑外的實體)
         var center = new Point(x, y);
         return candidates
-            .Where(e => e.Position.Distance(center) <= radius)
+            .Where(e => e.Id != id && e.Position.Distance(center) <= radius)
             .ToList();
     }
 
-    public void RemoveEntity(int id)
+    private void RemoveEntity(int id)
     {
         if (_allEntities.Remove(id, out var entity))
         {
             _index.Remove(entity.Position.EnvelopeInternal, entity);
+        }
+    }
+
+    public void RemoveUnusedEntity(HashSet<int> usedEntity)
+    {
+        int[] keys = _allEntities.Keys.ToArray();
+
+        foreach (var key in keys)
+        {
+            if (!usedEntity.Contains(key))
+            {
+                RemoveEntity(key);
+            }
         }
     }
 

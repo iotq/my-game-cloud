@@ -1,9 +1,10 @@
 ﻿using Google.Protobuf;
+using MyGameCloud.GameServer.Logic.Game;
 using MyGameCloud.GameServer.Network;
 
 namespace MyGameCloud.GameServer.Logic;
 
-public class Player(string id, IPeer peer, Lobby lobby)
+public class Player(string id, IPeer peer, Lobby lobby): IEatable
 {
     public string Id => id;
     public string Name = "";
@@ -14,7 +15,9 @@ public class Player(string id, IPeer peer, Lobby lobby)
     public float Y { get; set; }
     public float Rotation { get; set; }
     public int Hp { get; set; }
-    public int Mass { get; set; } = 1;
+    public int Mass { get; set; } = 2;
+    public int EntityId { get; set; } = -1;
+    public bool IsDead { get; set; } = false;
 
     public Room? CurrentRoom { get; set; }
 
@@ -35,7 +38,9 @@ public class Player(string id, IPeer peer, Lobby lobby)
 
     public static Player Create(IPeer peer, Lobby lobby)
     {
-        return new Player(Guid.NewGuid().ToString(), peer, lobby);
+        var p = new Player(Guid.NewGuid().ToString(), peer, lobby);
+        p.Name = $"Player {p.Id.Substring(0, 6)}";
+        return p;
     }
 
 
@@ -79,6 +84,7 @@ public class Player(string id, IPeer peer, Lobby lobby)
             Rotation = Rotation,
             Hp = Hp,
             Mass = Mass,
+            IsDead = IsDead,
         };
     }
 
@@ -95,6 +101,7 @@ public class Player(string id, IPeer peer, Lobby lobby)
             Rotation = Rotation,
             Hp = Hp,
             Mass = Mass,
+            IsDead = IsDead,
         };
     }
 
@@ -105,6 +112,7 @@ public class Player(string id, IPeer peer, Lobby lobby)
                Math.Abs(Y - _lastState.Y) > 0.01f ||
                Math.Abs(Rotation - _lastState.Rotation) > 0.1f ||
                Math.Abs(Mass - _lastState.Mass) > 0 ||
+               IsDead != _lastState.IsDead ||
                Hp != _lastState.Hp;
     }
     public void UpdateSnapshot()
@@ -118,12 +126,25 @@ public class Player(string id, IPeer peer, Lobby lobby)
         _lastState.Rotation = Rotation;
         _lastState.Hp = Hp;
         _lastState.Mass = Mass;
+        _lastState.IsDead = IsDead;
     }
+
+    public int GetMass()
+    {
+        return Mass;
+    }
+
+    public void OnEaten()
+    {
+        IsDead = true;
+    }
+
     private class PlayerSnapshot
     {
         public float X, Y, Rotation;
         public int Hp;
         public int Mass;
+        public bool IsDead;
     }
 
 }

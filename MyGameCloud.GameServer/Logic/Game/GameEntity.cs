@@ -7,8 +7,13 @@ public class GameEntity
 {
     public int Id { get; set; }
     public Point Position { get; set; } = new Point(new(0, 0));
-    public float Radius { get; set; }
-    public int Skin { get; set; }
 
-    public int Mass { get; set; }
+    public IEatable RefObj;
+
+    public GameEntity(int id, Point pos, IEatable obj)
+    {
+        Id = id;
+        Position = pos;
+        RefObj = obj;
+    }
 }

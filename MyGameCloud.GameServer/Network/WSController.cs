@@ -5,10 +5,12 @@ using MyGameCloud.GameServer.Logic;
 
 namespace MyGameCloud.GameServer.Network;
 
-[Route("ws")]
 public class WSController(ILogger<WSController> logger, Lobby lobby) : ControllerBase
 {
-    [HttpGet]
+
+    public static int WebsocketConnectionCount = 0;
+
+    [Route("ws")]
     public async Task Get()
     {
         if (!HttpContext.WebSockets.IsWebSocketRequest)
@@ -18,6 +20,13 @@ public class WSController(ILogger<WSController> logger, Lobby lobby) : Controlle
             return;
         }
 
+        if (WebsocketConnectionCount >= 20)
+        {
+            HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            HttpContext.Response.ContentType = "text/plain; charset=utf-8";
+            await HttpContext.Response.WriteAsync("連線數量已達上限，拒絕連線。");
+            return;
+        }
 
         using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
 
@@ -41,31 +50,31 @@ public class WSController(ILogger<WSController> logger, Lobby lobby) : Controlle
     {
         using MemoryStream ms = new();
         WebSocketReceiveResult result;
-        do
+        try
         {
-            result = await ws.ReceiveAsync(buffer, CancellationToken.None);
-            if (result.MessageType == WebSocketMessageType.Close)
+            do
             {
-                await player.CloseConnection();
-                break;
-            }
-            ms.Write(buffer, 0, result.Count);
+                result = await ws.ReceiveAsync(buffer, CancellationToken.None);
+                if (result.MessageType == WebSocketMessageType.Close)
+                {
+                    await player.CloseConnection();
+                    break;
+                }
+                ms.Write(buffer, 0, result.Count);
 
-        } while (!result.EndOfMessage);
+            } while (!result.EndOfMessage);
 
-        if (result.MessageType == WebSocketMessageType.Binary)
-        {
-            ms.Seek(0, SeekOrigin.Begin);
-            try
+            if (result.MessageType == WebSocketMessageType.Binary)
             {
+                ms.Seek(0, SeekOrigin.Begin);
                 Protos.ClientPacket packet = Protos.ClientPacket.Parser.ParseFrom(ms);
 
                 player.ProcessMessage(packet);
             }
-            catch (InvalidProtocolBufferException ex)
-            {
-                logger.LogError(ex, $"Failed On Parsing: {ex.Message}");
-            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Failed On Parsing: {ex.Message}");
         }
 
     }
