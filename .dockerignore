@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# IDE / Editor
+.vscode
+.idea
+*.swp
+
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Logs
+*.log
+logs/
+
+# Node (如果你有前端)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Docker
+Dockerfile*
+docker-compose*
+
+# OS / temp
+*.DS_Store
+Thumbs.db

@@ -24,9 +24,14 @@ var webSocketOptions = new WebSocketOptions
 };
 app.UseWebSockets(webSocketOptions);
 
+app.MapGet("/", async context =>
+{
+    context.Response.Redirect("/game/");
+});
 app.MapDefaultEndpoints();
 app.MapControllers();
 app.UseSerilogRequestLogging();
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
 app.Run();
