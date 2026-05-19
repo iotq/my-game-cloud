@@ -124,9 +124,20 @@ public class Room
     }
     private void BoardcastRealtimeData()
     {
-
         Protos.ServerPacket? packet = GetRealtimePacket();
-        if(packet is null) return;
+        if(packet is null)
+        {
+            // Clear Disconnected User 
+            foreach (var pid in Players.Keys.ToArray())
+            {
+                var player = Players[pid];
+                if (!player.Peer.IsOk())
+                {
+                    ExitPlayer(player.Id);
+                }
+            }
+            return;
+        }
         string[] keys = Players.Keys.ToArray();
         foreach (var pid in keys)
         {
