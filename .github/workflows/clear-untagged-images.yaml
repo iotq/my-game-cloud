@@ -1,6 +1,8 @@
 name: Cleanup GHCR Untagged Images
 
 on:
+  schedule:
+    - cron: '0 0 * * 0'
   workflow_dispatch:
 
 jobs:
@@ -11,5 +13,5 @@ jobs:
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           delete-untagged: true
-          dry-run: true
+          dry-run: false
           token: ${{ secrets.GHCR_CLEAN_TOKEN }}
