@@ -1,6 +1,8 @@
 # My Game Cloud
 
-Can Play in https://game.choitangfei.com (server is located in us-central, it may have large latency)
+## Live Play
+https://my-game-cloud-512536693789.asia-east2.run.app (hong kong)
+https://game.choitangfei.com (us-central)
 
 ## Play in local
 ```
