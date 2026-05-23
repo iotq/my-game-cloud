@@ -38,8 +38,8 @@ public class Room
 
 
         // calcute pos
-        float spawnWidth = 1024f;
-        float spawnHeight = 1024f;
+        float spawnWidth = 750f;
+        float spawnHeight = 750f;
         float minDistanceToOtherPlayer = 100f;
 
         Random rand = new Random();

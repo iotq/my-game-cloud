@@ -11,7 +11,7 @@ public class GameWorld
     private int entityIdCursor = 0;
 
     public float WorldWidth = 1600;
-    public float WorldHeight = 1600;    
+    public float WorldHeight = 1600;
 
 
     public GameWorld(Room room)
